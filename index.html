@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>CampoBassoCalabrinieri OS</title>
-  <link rel="icon" href="data:,"> <!-- Evita errore favicon -->
+  <link rel="icon" href="data:,">
   <style>
     body {
       background: linear-gradient(135deg, #000, #111);
@@ -51,6 +51,7 @@
       justify-content: center;
       font-size: 24px;
       z-index: 999;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -61,44 +62,51 @@
   <p>Il sistema operativo approvato dai carabinieri del cyberspazio 👮‍♂️💾</p>
 
   <input id="osInput" placeholder="Che sistema operativo usi?" />
-  <button onclick="checkOS()">Invia</button>
+  <button id="sendBtn">Invia</button>
 
   <audio id="introAudio" src="Intro.mp3"></audio>
 
+  <!-- ✅ Mettiamo tutto il JS alla fine -->
   <script>
-    const audio = document.getElementById("introAudio");
-    const overlay = document.getElementById("overlay");
+    window.addEventListener("DOMContentLoaded", () => {
+      const audio = document.getElementById("introAudio");
+      const overlay = document.getElementById("overlay");
+      const sendBtn = document.getElementById("sendBtn");
+      const osInput = document.getElementById("osInput");
 
-    window.addEventListener("click", () => {
-      audio.play().then(() => {
-        overlay.style.display = "none";
-      }).catch(() => {
-        overlay.textContent = "Errore nel riprodurre l'audio 😢";
+      // Clic sull'overlay per attivare audio
+      overlay.addEventListener("click", () => {
+        audio.play().then(() => {
+          overlay.style.display = "none";
+        }).catch(() => {
+          overlay.textContent = "Errore nel riprodurre l'audio 😢";
+        });
       });
-    }, { once: true });
 
-    function diagnoseErrors() {
-      const diag = document.createElement("div");
-      diag.innerHTML = `
-        <div style="position:fixed;top:0;left:0;right:0;bottom:0;
-          background:#111;color:#fff;display:flex;
-          flex-direction:column;align-items:center;justify-content:center;
-          font-size:24px;z-index:10000;text-align:center">
-          <p>🛠️ CampoBassoCalabrinieri sta cercando problemi di connessione...</p>
-          <p style="font-size:16px;margin-top:20px">Prova a riavviare il modem oppure contatta l'Arma</p>
-        </div>
-      `;
-      document.body.appendChild(diag);
-    }
+      sendBtn.addEventListener("click", () => {
+        const val = osInput.value.toLowerCase();
+        if (val.includes("windows")) {
+          diagnoseErrors();
+        } else {
+          alert("Solo Windows supportato. Passa a CampoBassoCalabrinieri OS.");
+        }
+      });
 
-    function checkOS() {
-      const val = document.getElementById("osInput").value.toLowerCase();
-      if (val.includes("windows")) {
-        diagnoseErrors();
-      } else {
-        alert("Solo Windows supportato. Passa a CampoBassoCalabrinieri OS.");
+      // Simula finestra di risoluzione problemi
+      function diagnoseErrors() {
+        const diag = document.createElement("div");
+        diag.innerHTML = `
+          <div style="position:fixed;top:0;left:0;right:0;bottom:0;
+            background:#111;color:#fff;display:flex;
+            flex-direction:column;align-items:center;justify-content:center;
+            font-size:24px;z-index:10000;text-align:center">
+            <p>🛠️ CampoBassoCalabrinieri sta cercando problemi di connessione...</p>
+            <p style="font-size:16px;margin-top:20px">Prova a riavviare il modem oppure contatta l'Arma</p>
+          </div>
+        `;
+        document.body.appendChild(diag);
       }
-    }
+    });
   </script>
 </body>
 </html>
