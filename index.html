@@ -3,187 +3,102 @@
 <head>
   <meta charset="UTF-8">
   <title>CampoBassoCalabrinieri OS</title>
+  <link rel="icon" href="data:,"> <!-- Evita errore favicon -->
   <style>
     body {
-      background: radial-gradient(circle, #000000, #111111);
-      color: #00ffcc;
+      background: linear-gradient(135deg, #000, #111);
+      color: #00ffe1;
       font-family: 'Courier New', monospace;
       text-align: center;
       padding: 50px;
-      overflow: hidden;
+      animation: neon-bg 3s infinite alternate;
+    }
+
+    @keyframes neon-bg {
+      0% { background-color: #000; }
+      100% { background-color: #111; }
     }
 
     h1 {
-      font-size: 4em;
-      animation: neon 1s infinite alternate, bounce 2s infinite;
+      font-size: 40px;
+      text-shadow: 0 0 10px #00ffe1;
+      animation: shake 1s infinite alternate;
     }
 
-    p {
-      font-size: 1.5em;
-      animation: glitch 3s infinite;
+    @keyframes shake {
+      0% { transform: rotate(-1deg); }
+      100% { transform: rotate(1deg); }
     }
 
-    input {
-      margin-top: 30px;
-      padding: 15px;
-      font-size: 1.3em;
-      background-color: black;
-      border: 3px solid #00ffcc;
-      color: #00ffcc;
-      outline: none;
-      animation: neon 1s infinite alternate;
+    input, button {
+      font-size: 18px;
+      padding: 10px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 10px;
+      background: #111;
+      color: #00ffe1;
+      box-shadow: 0 0 10px #00ffe1;
     }
 
-    .popup {
+    #overlay {
       position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      background: black;
-      color: lime;
-      border: 4px double #0ff;
-      padding: 30px;
-      font-size: 1.5em;
-      z-index: 9999;
-      animation: popupAnim 0.5s ease forwards;
-    }
-
-    .overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.95);
-      color: #00ffcc;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.95);
+      color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2em;
-      z-index: 10000;
-      cursor: pointer;
-      animation: neon 1s infinite alternate;
-    }
-
-    .offline-screen {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: #f2f2f2;
-      color: #5f6368;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: Arial, sans-serif;
-      z-index: 9999;
-    }
-
-    .offline-screen h2 {
       font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    .offline-screen p {
-      font-size: 16px;
-      color: #5f6368;
-    }
-
-    @keyframes popupAnim {
-      to {
-        transform: translate(-50%, -50%) scale(1);
-      }
-    }
-
-    @keyframes neon {
-      from { text-shadow: 0 0 10px #0ff, 0 0 20px #0ff; }
-      to { text-shadow: 0 0 20px #0ff, 0 0 40px #00f; }
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    @keyframes glitch {
-      0% {
-        text-shadow: 2px 0 red, -2px 0 cyan;
-        transform: translateX(0);
-      }
-      20% {
-        text-shadow: -2px 0 red, 2px 0 cyan;
-        transform: translateX(-1px);
-      }
-      40% {
-        text-shadow: 2px 0 red, -2px 0 cyan;
-        transform: translateX(1px);
-      }
-      60% {
-        text-shadow: -2px 0 red, 2px 0 cyan;
-        transform: translateX(-1px);
-      }
-      80% {
-        text-shadow: 2px 0 red, -2px 0 cyan;
-        transform: translateX(1px);
-      }
-      100% {
-        text-shadow: 2px 0 red, -2px 0 cyan;
-        transform: translateX(0);
-      }
+      z-index: 999;
     }
   </style>
 </head>
 <body>
+  <div id="overlay">⚠️ Autoplay bloccato. Clicca per attivare l'audio.</div>
 
-  <div class="overlay" id="audioOverlay" onclick="startAudio()">
-    Clicca qui per entrare sul launcher!
-  </div>
+  <h1>BENVENUTO IN CAMPOBASSOCALABRINIERI OS</h1>
+  <p>Il sistema operativo approvato dai carabinieri del cyberspazio 👮‍♂️💾</p>
 
-  <h1>CampoBassoCalabrinieri OS</h1>
-  <p>
-    Benvenuto nel sistema operativo più tamarro mai concepito.<br>
-    Inserisci il tuo sistema operativo per iniziare.
-  </p>
+  <input id="osInput" placeholder="Che sistema operativo usi?" />
+  <button onclick="checkOS()">Invia</button>
 
-  <input type="text" id="osInput" placeholder="Che sistema operativo usi?" onkeydown="checkOS(event)">
-
-  <div id="popup" class="popup" style="display:none;">
-    Avvio strumento di risoluzione dei problemi di Windows...
-  </div>
-
-  <audio id="intro">
-    <source src="Intro.mp3" type="audio/mpeg">
-  </audio>
+  <audio id="introAudio" src="Intro.mp3"></audio>
 
   <script>
-    function startAudio() {
-      const audio = document.getElementById("intro");
-      const overlay = document.getElementById("audioOverlay");
-      overlay.style.display = "none";
-      audio.play().catch(() => {
-        console.log("Audio bloccato dal browser");
+    const audio = document.getElementById("introAudio");
+    const overlay = document.getElementById("overlay");
+
+    window.addEventListener("click", () => {
+      audio.play().then(() => {
+        overlay.style.display = "none";
+      }).catch(() => {
+        overlay.textContent = "Errore nel riprodurre l'audio 😢";
       });
+    }, { once: true });
+
+    function diagnoseErrors() {
+      const diag = document.createElement("div");
+      diag.innerHTML = `
+        <div style="position:fixed;top:0;left:0;right:0;bottom:0;
+          background:#111;color:#fff;display:flex;
+          flex-direction:column;align-items:center;justify-content:center;
+          font-size:24px;z-index:10000;text-align:center">
+          <p>🛠️ CampoBassoCalabrinieri sta cercando problemi di connessione...</p>
+          <p style="font-size:16px;margin-top:20px">Prova a riavviare il modem oppure contatta l'Arma</p>
+        </div>
+      `;
+      document.body.appendChild(diag);
     }
 
-    function checkOS(event) {
-      if (event.key === "Enter") {
-        const os = document.getElementById("osInput").value.trim().toLowerCase();
-        if (os === "windows") {
-          showOfflineScreen();
-        } else {
-          alert("Sistema operativo non supportato da CampoBassoCalabrinieri OS!");
-        }
+    function checkOS() {
+      const val = document.getElementById("osInput").value.toLowerCase();
+      if (val.includes("windows")) {
+        diagnoseErrors();
+      } else {
+        alert("Solo Windows supportato. Passa a CampoBassoCalabrinieri OS.");
       }
     }
-
-    function showOfflineScreen() {
-      const offlineDiv = document.createElement("div");
-      offlineDiv.className = "offline-screen";
-      offlineDiv.innerHTML = `
-        <h2>Non sei connesso a Internet</h2>
-        <p>Controlla la tua connessione di rete.</p>
-      `;
-      document.body.appendChild(offlineDiv);
-    }
   </script>
-
 </body>
 </html>
