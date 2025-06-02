@@ -1,66 +1,138 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <title>CampoBassoCalabrinieri OS</title>
-  <style>
-    body { 
-      font-family: monospace; color: #0ff; background: #000; text-align:center; padding: 50px; 
-    }
-    input, button {
-      font-size: 18px;
-      padding: 10px;
-      margin-top: 20px;
-      border-radius: 5px;
-      border: none;
-      background: #111;
-      color: #0ff;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CampoBassoCalabrinieri OS</title>
+<style>
+  body {
+    background: #000;
+    color: #0ff;
+    font-family: monospace;
+    text-align: center;
+    padding: 50px;
+  }
+  input, button {
+    font-size: 18px;
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 5px;
+    border: none;
+    background: #111;
+    color: #0ff;
+  }
+  button:hover {
+    background: #0a0;
+    cursor: pointer;
+  }
+  /* MODALE */
+  #modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease forwards;
+  }
+  #modal.active {
+    display: flex;
+  }
+  #modalContent {
+    background: #002200;
+    border: 2px solid #0ff;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 90%;
+    color: #0ff;
+    font-size: 20px;
+    box-shadow: 0 0 20px #0ff;
+    animation: slideIn 0.3s ease forwards;
+  }
+  #modalClose {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #0ff;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  #modalClose:hover {
+    background: #0cc;
+    cursor: pointer;
+  }
+  /* Animazioni */
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+  @keyframes slideIn {
+    from {transform: translateY(-50px); opacity: 0;}
+    to {transform: translateY(0); opacity: 1;}
+  }
+</style>
 </head>
 <body>
 
-  <h1>CampoBassoCalabrinieri OS</h1>
-  <p>Che sistema operativo usi?</p>
+<h1>CampoBassoCalabrinieri OS</h1>
+<p>Che sistema operativo usi?</p>
 
-  <input id="osInput" placeholder="Es. Windows" />
-  <button id="sendBtn">Invia</button>
+<input id="osInput" placeholder="Es. Windows" />
+<button id="sendBtn">Invia</button>
 
-  <audio id="introAudio" src="Intro.mp3"></audio>
+<audio id="introAudio" src="Intro.mp3"></audio>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      console.log("DOM caricato correttamente");
+<!-- MODALE -->
+<div id="modal">
+  <div id="modalContent">
+    <div id="modalMessage"></div>
+    <button id="modalClose">Chiudi</button>
+  </div>
+</div>
 
-      const audio = document.getElementById("introAudio");
-      const sendBtn = document.getElementById("sendBtn");
-      const osInput = document.getElementById("osInput");
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const audio = document.getElementById("introAudio");
+  const sendBtn = document.getElementById("sendBtn");
+  const osInput = document.getElementById("osInput");
+  const modal = document.getElementById("modal");
+  const modalMessage = document.getElementById("modalMessage");
+  const modalClose = document.getElementById("modalClose");
 
-      // Facciamo partire audio al primo click sulla pagina
-      document.body.addEventListener("click", () => {
-        audio.play().then(() => {
-          console.log("Audio partito!");
-        }).catch(e => {
-          console.log("Errore audio:", e);
-        });
-      }, { once: true });
+  // Partenza audio al primo click sulla pagina (autoplay blocco)
+  document.body.addEventListener("click", () => {
+    audio.play().catch(e => console.log("Errore audio autoplay:", e));
+  }, { once: true });
 
-      // Funzione di diagnosi simulata
-      function diagnoseErrors() {
-        alert("Diagnosi automatica avviata per Windows...");
-      }
+  function showModal(msg) {
+    modalMessage.textContent = msg;
+    modal.classList.add("active");
+  }
 
-      sendBtn.addEventListener("click", () => {
-        const os = osInput.value.trim().toLowerCase();
-        console.log("OS inserito:", os);
-        if (os === "windows") {
-          diagnoseErrors();
-        } else {
-          alert("Solo Windows supportato!");
-        }
-      });
-    });
-  </script>
+  modalClose.addEventListener("click", () => {
+    modal.classList.remove("active");
+  });
+
+  function diagnoseErrors() {
+    showModal("Diagnosi automatica avviata per Windows...");
+  }
+
+  sendBtn.addEventListener("click", () => {
+    const os = osInput.value.trim().toLowerCase();
+    if(os === "") {
+      showModal("Inserisci un sistema operativo!");
+      return;
+    }
+    if (os === "windows") {
+      diagnoseErrors();
+    } else {
+      showModal("Solo Windows supportato per la diagnosi automatica.");
+    }
+  });
+});
+</script>
 
 </body>
 </html>
