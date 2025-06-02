@@ -1,112 +1,67 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>CampoBassoCalabrinieri OS</title>
-  <link rel="icon" href="data:,">
   <style>
-    body {
-      background: linear-gradient(135deg, #000, #111);
-      color: #00ffe1;
-      font-family: 'Courier New', monospace;
-      text-align: center;
-      padding: 50px;
-      animation: neon-bg 3s infinite alternate;
+    body { 
+      font-family: monospace; color: #0ff; background: #000; text-align:center; padding: 50px; 
     }
-
-    @keyframes neon-bg {
-      0% { background-color: #000; }
-      100% { background-color: #111; }
-    }
-
-    h1 {
-      font-size: 40px;
-      text-shadow: 0 0 10px #00ffe1;
-      animation: shake 1s infinite alternate;
-    }
-
-    @keyframes shake {
-      0% { transform: rotate(-1deg); }
-      100% { transform: rotate(1deg); }
-    }
-
     input, button {
       font-size: 18px;
       padding: 10px;
       margin-top: 20px;
+      border-radius: 5px;
       border: none;
-      border-radius: 10px;
       background: #111;
-      color: #00ffe1;
-      box-shadow: 0 0 10px #00ffe1;
-    }
-
-    #overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.95);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      z-index: 999;
-      cursor: pointer;
+      color: #0ff;
     }
   </style>
 </head>
 <body>
-  <div id="overlay">⚠️ Autoplay bloccato. Clicca per attivare l'audio.</div>
 
-  <h1>BENVENUTO IN CAMPOBASSOCALABRINIERI OS</h1>
-  <p>Il sistema operativo approvato dai carabinieri del cyberspazio 👮‍♂️💾</p>
+  <h1>CampoBassoCalabrinieri OS</h1>
+  <p>Che sistema operativo usi?</p>
 
-  <input id="osInput" placeholder="Che sistema operativo usi?" />
+  <input id="osInput" placeholder="Es. Windows" />
   <button id="sendBtn">Invia</button>
 
   <audio id="introAudio" src="Intro.mp3"></audio>
 
-  <!-- ✅ Mettiamo tutto il JS alla fine -->
   <script>
-    window.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("DOM caricato correttamente");
+
       const audio = document.getElementById("introAudio");
-      const overlay = document.getElementById("overlay");
       const sendBtn = document.getElementById("sendBtn");
       const osInput = document.getElementById("osInput");
 
-      // Clic sull'overlay per attivare audio
-      overlay.addEventListener("click", () => {
+      // Facciamo partire audio al primo click sulla pagina
+      document.body.addEventListener("click", () => {
         audio.play().then(() => {
-          overlay.style.display = "none";
-        }).catch(() => {
-          overlay.textContent = "Errore nel riprodurre l'audio 😢";
+          console.log("Audio partito!");
+        }).catch(e => {
+          console.log("Errore audio:", e);
         });
-      });
+      }, { once: true });
+
+      // Funzione di diagnosi simulata
+      function diagnoseErrors() {
+        alert("Diagnosi automatica avviata per Windows...");
+      }
 
       sendBtn.addEventListener("click", () => {
-        const val = osInput.value.toLowerCase();
-        if (val.includes("windows")) {
+        const os = osInput.value.trim().toLowerCase();
+        console.log("OS inserito:", os);
+        if (os === "windows") {
           diagnoseErrors();
         } else {
-          alert("Solo Windows supportato. Passa a CampoBassoCalabrinieri OS.");
+          alert("Solo Windows supportato!");
         }
       });
-
-      // Simula finestra di risoluzione problemi
-      function diagnoseErrors() {
-        const diag = document.createElement("div");
-        diag.innerHTML = `
-          <div style="position:fixed;top:0;left:0;right:0;bottom:0;
-            background:#111;color:#fff;display:flex;
-            flex-direction:column;align-items:center;justify-content:center;
-            font-size:24px;z-index:10000;text-align:center">
-            <p>🛠️ CampoBassoCalabrinieri sta cercando problemi di connessione...</p>
-            <p style="font-size:16px;margin-top:20px">Prova a riavviare il modem oppure contatta l'Arma</p>
-          </div>
-        `;
-        document.body.appendChild(diag);
-      }
     });
   </script>
+
 </body>
 </html>
+
