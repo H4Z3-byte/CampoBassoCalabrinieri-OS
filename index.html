@@ -22,7 +22,6 @@
 
     p {
       font-size: 1.6em;
-      line-height: 1.8;
       animation: glitch 2s infinite;
     }
 
@@ -30,12 +29,42 @@
       display: none;
     }
 
+    input {
+      padding: 12px;
+      font-size: 1.2em;
+      background-color: #111;
+      border: 2px solid #0ff;
+      color: #0ff;
+      margin-top: 30px;
+      animation: neonGlow 1s infinite alternate;
+    }
+
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: black;
+      color: lime;
+      border: 4px double #0ff;
+      padding: 30px;
+      font-size: 1.5em;
+      z-index: 9999;
+      animation: popupAnim 0.5s ease forwards;
+    }
+
+    @keyframes popupAnim {
+      to {
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
     @keyframes neonGlow {
       from {
-        text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
+        text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
       }
       to {
-        text-shadow: 0 0 20px #0ff, 0 0 40px #0ff, 0 0 60px #00f;
+        text-shadow: 0 0 20px #0ff, 0 0 40px #00f;
       }
     }
 
@@ -74,103 +103,47 @@
         transform: translateX(0);
       }
     }
-
-    .scanlines::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      background-image: repeating-linear-gradient(to bottom, rgba(255,255,255,0.02) 0, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 2px);
-      pointer-events: none;
-      z-index: 1000;
-    }
-
-    .flash {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      width: 100vw;
-      background: white;
-      animation: flashbang 0.3s ease-in-out forwards;
-      z-index: 999;
-      opacity: 0;
-    }
-
-    @keyframes flashbang {
-      0% { opacity: 0; }
-      50% { opacity: 1; }
-      100% { opacity: 0; }
-    }
-
-    .matrix-fall {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .matrix-fall span {
-      position: absolute;
-      top: -100px;
-      color: lime;
-      animation: fall linear infinite;
-      font-size: 16px;
-    }
-
-    @keyframes fall {
-      to {
-        transform: translateY(120vh);
-      }
-    }
   </style>
 </head>
-<body class="scanlines">
-
-  <div class="flash"></div>
-
-  <div class="matrix-fall" id="matrix"></div>
+<body>
 
   <h1>CampoBassoCalabrinieri OS</h1>
   <p>
-    Benvenuto nel sistema operativo <strong>più tamarro e patriottico</strong> della storia.<br>
-    Potenza molisana, stabilità calabrese, caos visivo garantito.<br>
-    Progettato per esplodere in stile ogni volta che lo apri.
+    Benvenuto nel sistema operativo più tamarro mai concepito.<br>
+    Inserisci il tuo sistema operativo per iniziare.
   </p>
+
+  <input type="text" id="osInput" placeholder="Che sistema operativo usi?" onkeydown="checkOS(event)">
+
+  <div id="popup" class="popup" style="display:none;">
+    Avvio strumento di risoluzione dei problemi di Windows...
+  </div>
 
   <audio id="intro" autoplay>
     <source src="Intro.mp3" type="audio/mpeg">
-    Il tuo browser non supporta l'audio.
   </audio>
 
   <script>
-    // Autoplay compatibile con GitHub Pages
-    const audio = document.getElementById("intro");
+    function checkOS(event) {
+      if (event.key === "Enter") {
+        const os = document.getElementById("osInput").value.trim().toLowerCase();
+        if (os === "windows") {
+          document.getElementById("popup").style.display = "block";
+        } else {
+          alert("Sistema operativo non supportato da CampoBassoCalabrinieri OS!");
+        }
+      }
+    }
+
+    // Forzare l'audio suonare (best-effort)
     window.addEventListener("load", () => {
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          console.log("⚠️ Autoplay bloccato, clicca per attivare l'audio.");
-        });
+      const audio = document.getElementById("intro");
+      const promise = audio.play();
+      if (promise !== undefined) {
+        promise.catch(() => console.log("Audio bloccato dal browser"));
       }
     });
-
-    // Matrix falling characters
-    const matrix = document.getElementById("matrix");
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&";
-    for (let i = 0; i < 100; i++) {
-      let span = document.createElement("span");
-      span.textContent = letters[Math.floor(Math.random() * letters.length)];
-      span.style.left = Math.random() * 100 + "vw";
-      span.style.animationDuration = 2 + Math.random() * 3 + "s";
-      matrix.appendChild(span);
-    }
   </script>
+
 </body>
 </html>
