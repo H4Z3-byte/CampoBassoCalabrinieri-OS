@@ -25,7 +25,6 @@
     background: #0a0;
     cursor: pointer;
   }
-  /* MODALE */
   #modal {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -34,7 +33,6 @@
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    animation: fadeIn 0.3s ease forwards;
   }
   #modal.active {
     display: flex;
@@ -48,7 +46,8 @@
     color: #0ff;
     font-size: 20px;
     box-shadow: 0 0 20px #0ff;
-    animation: slideIn 0.3s ease forwards;
+    white-space: pre-wrap;
+    text-align: left;
   }
   #modalClose {
     margin-top: 20px;
@@ -62,15 +61,6 @@
   #modalClose:hover {
     background: #0cc;
     cursor: pointer;
-  }
-  /* Animazioni */
-  @keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
-  }
-  @keyframes slideIn {
-    from {transform: translateY(-50px); opacity: 0;}
-    to {transform: translateY(0); opacity: 1;}
   }
 </style>
 </head>
@@ -87,13 +77,12 @@
 <!-- MODALE -->
 <div id="modal">
   <div id="modalContent">
-    <div id="modalMessage"></div>
-    <button id="modalClose">Chiudi</button>
+    <div id="modalMessage">Diagnosi in attesa...</div>
+    <button id="modalClose" style="display:none;">Chiudi</button>
   </div>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
   const audio = document.getElementById("introAudio");
   const sendBtn = document.getElementById("sendBtn");
   const osInput = document.getElementById("osInput");
@@ -101,37 +90,64 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalMessage = document.getElementById("modalMessage");
   const modalClose = document.getElementById("modalClose");
 
-  // Partenza audio al primo click sulla pagina (autoplay blocco)
+  // Per far partire audio al primo click della pagina
   document.body.addEventListener("click", () => {
-    audio.play().catch(e => console.log("Errore audio autoplay:", e));
+    audio.play().catch(e => console.log("Audio autoplay bloccato:", e));
   }, { once: true });
 
-  function showModal(msg) {
-    modalMessage.textContent = msg;
+  // Mostra modale
+  function showModal() {
     modal.classList.add("active");
   }
-
-  modalClose.addEventListener("click", () => {
+  // Nasconde modale
+  function hideModal() {
     modal.classList.remove("active");
-  });
-
-  function diagnoseErrors() {
-    showModal("Diagnosi automatica avviata per Windows...");
   }
 
+  // Chiudi modale bottone
+  modalClose.addEventListener("click", () => {
+    hideModal();
+    modalMessage.textContent = "Diagnosi in attesa...";
+    modalClose.style.display = "none";
+  });
+
+  // Funzione di diagnosi simulata (si vede in tempo reale)
+  function diagnoseErrors() {
+    showModal();
+    modalMessage.textContent = "Diagnosi automatica avviata per Windows...\n\n";
+    modalClose.style.display = "none";
+
+    const steps = [
+      "Controllo connessione di rete...",
+      "Verifica driver hardware...",
+      "Scansione errori disco...",
+      "Aggiornamento sistema operativo...",
+      "Riavvio del sistema richiesto.",
+      "Diagnosi completata con successo!"
+    ];
+
+    let i = 0;
+    function nextStep() {
+      if (i < steps.length) {
+        modalMessage.textContent += steps[i] + "\n";
+        i++;
+        setTimeout(nextStep, 1500);
+      } else {
+        modalClose.style.display = "inline-block";
+      }
+    }
+    nextStep();
+  }
+
+  // Al click del bottone
   sendBtn.addEventListener("click", () => {
     const os = osInput.value.trim().toLowerCase();
-    if(os === "") {
-      showModal("Inserisci un sistema operativo!");
-      return;
-    }
     if (os === "windows") {
       diagnoseErrors();
     } else {
-      showModal("Solo Windows supportato per la diagnosi automatica.");
+      alert("Sistema operativo non riconosciuto o non supportato per la diagnosi.");
     }
   });
-});
 </script>
 
 </body>
